@@ -103,7 +103,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\fftw-build;$(ProjectDir)..\vapoursynth-sdk\include\vapoursynth;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\fftw-build;$(ProjectDir)..\vapoursynth-sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>fftw3f.lib;ucrtd.lib;vcruntimed.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -113,7 +113,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\fftw-build;$(ProjectDir)..\vapoursynth-sdk\include\vapoursynth;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\fftw-build;$(ProjectDir)..\vapoursynth-sdk\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(ProjectDir)..\fftw-build;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

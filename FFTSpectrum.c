@@ -19,8 +19,9 @@
 
 #include <stdbool.h>
 #include <math.h>
+
+#if defined(_MSC_VER)
 #include <intrin.h>
-#include <windows.h>
 
 #define USE_SSE_AUTO
 #define __SSE4_2__
@@ -33,10 +34,20 @@
 #undef USE_SSE_AUTO
 #undef inline
 
+#elif defined(__GNUC__) && (defined(__x86_64__) || defined(__i386__))
+#include <x86intrin.h>
+
+#define USE_SSE4
+#define SSE_MATHFUN_WITH_CODE
+#include "sse_mathfun.h"
+
+#endif
+
 #include "fftw3.h"
 
-#include "VapourSynth.h"
-#include "VSHelper.h"
+#include "vapoursynth/VapourSynth.h"
+#include "vapoursynth/VSHelper.h"
+
 
 typedef struct {
     VSNodeRef *node;
@@ -182,7 +193,6 @@ static void VS_CC fftSpectrumInit(VSMap *in, VSMap *out, void **instanceData, VS
     d->out_vi = *d->in_vi;
     d->out_vi.format = vsapi->getFormatPreset(pfGray8, core);
     vsapi->setVideoInfo(&d->out_vi, 1, node);
-    OutputDebugString("FFTSpectrum: fftSpectrumInit");
 }
 
 static const VSFrameRef *VS_CC fftSpectrumGetFrame(int n, int activationReason, void **instanceData, void **frameData, VSFrameContext *frameCtx, VSCore *core, const VSAPI *vsapi) {
