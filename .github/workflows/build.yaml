@@ -1,0 +1,52 @@
+name: Build for Windows
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        platform: [ windows-latest ]
+        arch: [ x64 ]
+    runs-on: ${{ matrix.platform }}
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
+
+    - name: Run vcpkg
+      uses: lukka/run-vcpkg@v4
+      with:
+        vcpkgArguments: 'fftw3[avx2]:x64-windows-static'
+        vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+        vcpkgGitCommitId: 5568f110b509a9fd90711978a7cb76bae75bb092 # 2021.05.12 release
+
+    - name: Setup Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.x'
+    - name: install meson and ninja
+      run: pip install meson ninja
+
+    - name: download VS headers and patch header location
+      shell: bash
+      run: |
+        git clone https://github.com/vapoursynth/vapoursynth --depth=1 --branch R54
+        cp vapoursynth/include/*.h vapoursynth/
+
+    - name: setup MS dev commands
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: ${{ matrix.arch }}
+    - name: Install pkg-config lite
+      run: choco install pkgconfiglite
+    - name: Meson setup
+      run: meson setup builddir/ -Db_vscrt=mt -Dpkg_config_path=${{ github.workspace }}/vcpkg/installed/x64-windows-static/lib/pkgconfig
+    - name: Meson compile
+      run: meson compile -C builddir/ -v
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: release-${{matrix.arch}}
+        path: |
+          builddir/*.dll
